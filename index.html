@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>License Check</title>
+  <style>
+    body { font-family: Arial; background:#111; color:#fff; text-align:center; }
+    input, button { padding:10px; margin:5px; }
+  </style>
+</head>
+<body>
+
+<h2>Enter License Key</h2>
+
+<input id="key" placeholder="XXXX-XXXX">
+<button onclick="check()">Verify</button>
+
+<p id="result"></p>
+
+<script>
+function check() {
+  fetch("/api/validate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ key: document.getElementById("key").value })
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("result").innerText =
+      "Status: " + data.status;
+  });
+}
+</script>
+
+</body>
+</html>

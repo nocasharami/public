@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+</head>
+<body>
+  <h1>Admin Panel</h1>
+  <button onclick="createKey()">Create Key</button>
+  <ul id="keysList"></ul>
+
+  <script>
+    const token = localStorage.getItem("token");
+
+    function createKey() {
+      fetch('/api/create-key', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert("New Key: " + data.key);
+        listKeys();
+      });
+    }
+
+    function listKeys() {
+      fetch('/api/keys', { headers: { 'Authorization': token } })
+      .then(res => res.json())
+      .then(data => {
+        const ul = document.getElementById('keysList');
+        ul.innerHTML = "";
+        data.forEach(k => {
+          const li = document.createElement("li");
+          li.textContent = k.key + " | Banned: " + k.banned;
+          ul.appendChild(li);
+        });
+      });
+    }
+
+    listKeys();
+  </script>
+</body>
+</html>
