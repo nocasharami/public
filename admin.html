@@ -2,6 +2,12 @@
 <html>
 <head>
   <title>Admin Panel</title>
+  <style>
+    body { font-family: Arial; padding:20px; }
+    button { padding:4px 8px; margin-left:5px; }
+    ul { list-style:none; padding:0; }
+    li { margin:5px 0; }
+  </style>
 </head>
 <body>
   <h1>Admin Panel</h1>
@@ -26,6 +32,24 @@
       });
     }
 
+    function banKey(key) {
+      fetch('/api/ban-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': token },
+        body: JSON.stringify({ key })
+      })
+      .then(() => listKeys());
+    }
+
+    function unbanKey(key) {
+      fetch('/api/unban-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': token },
+        body: JSON.stringify({ key })
+      })
+      .then(() => listKeys());
+    }
+
     function listKeys() {
       fetch('/api/keys', { headers: { 'Authorization': token } })
       .then(res => res.json())
@@ -34,7 +58,11 @@
         ul.innerHTML = "";
         data.forEach(k => {
           const li = document.createElement("li");
-          li.textContent = k.key + " | Banned: " + k.banned;
+          li.innerHTML = `
+            ${k.key} | Status: ${k.banned ? "Banned" : "Active"}
+            <button onclick="banKey('${k.key}')">Ban</button>
+            <button onclick="unbanKey('${k.key}')">Unban</button>
+          `;
           ul.appendChild(li);
         });
       });
